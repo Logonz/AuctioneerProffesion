@@ -1,0 +1,53 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<!--<Script file="localization.lua"/>-->
+	<Script file="AuctioneerProffesion.lua"/>
+	
+	<Frame name="AuctioneerProffesion_InfoFrame" parent="TradeSkillFrame" toplevel="true" enableMouse="true" hidden="true">
+     <Size>
+       <AbsDimension x="200" y="200" />
+     </Size>
+     <Anchors>
+       <Anchor point="CENTER" />
+     </Anchors>
+     <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
+           edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+       <BackgroundInsets>
+         <AbsInset left="11" right="12" top="12" bottom="11"/>
+       </BackgroundInsets>
+       <TileSize>
+         <AbsValue val="32"/>
+       </TileSize>
+       <EdgeSize>
+         <AbsValue val="32"/>
+       </EdgeSize>
+     </Backdrop>
+	 <Layers>
+		<Layer level="ARTWORK">
+			<FontString name="AucProf_InfoText" text="Idle" justifyH="LEFT" inherits="GameFontNormalSmall">
+			  <Anchors>
+				<Anchor point="TOPLEFT">
+				  <Offset>
+					<AbsDimension x="15" y="-45" />
+				  </Offset>
+				</Anchor>
+			  </Anchors>
+			</FontString>
+		</Layer>
+	</Layers>
+   </Frame>
+	
+	<Frame name="AuctioneerProffesion_Frame" parent="UIParent" toplevel="true" enableMouse="true" hidden="false">
+		<Scripts>
+			<OnUpdate>
+				AucProf_OnUpdate();
+			</OnUpdate>
+			<OnLoad>
+				AucProf_OnLoad();
+			</OnLoad>
+			<OnEvent>
+				AucProf_OnEvent(this, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+			</OnEvent>
+		</Scripts>
+   </Frame>
+</Ui>

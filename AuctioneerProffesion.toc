@@ -1,0 +1,6 @@
+## Interface: 11200
+## Title: AuctioneerProfession
+## Notes: AuctioneerProfession for 1.12.1
+## SavedVariables: aucprof_merchantitems
+## Dependencies: Auctioneer, EnhTooltip, Enchantrix, LootLink
+AuctioneerProffesion.xml
