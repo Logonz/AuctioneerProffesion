@@ -3,7 +3,7 @@
 	<!--<Script file="localization.lua"/>-->
 	<Script file="AuctioneerProffesion.lua"/>
 	
-	<Frame name="AuctioneerProffesion_InfoFrame" parent="TradeSkillFrame" toplevel="true" enableMouse="true" hidden="true">
+	<Frame name="AuctioneerProffesion_InfoFrame" parent="UIParent" toplevel="true" enableMouse="true" hidden="true">
      <Size>
        <AbsDimension x="200" y="200" />
      </Size>

@@ -9,13 +9,20 @@ function EnchantrixValues(totals)
 end
 
 function AucProf_MoneyString(amount, color)
+	if(amount == nil) then
+		return "";
+	end
+	local GSC_GOLD="ffd100"
+	local GSC_SILVER="e6e6e6"
+	local GSC_COPPER="c8602c"
+	
 	local color = false or color;
-	local BOg,BOs,BOc = EnhTooltip.GetGSC(amount);
+	local BOg,BOs,BOc = EnhTooltip.GetGSC(math.abs(amount));
 	if(color == true) then
 		if(amount < 0) then
-			return "|cFFFF0000"..BOg.."|rg|cFFFF0000"..BOs.."|rs|cFFFF0000"..BOc.."|rc";
+			return "|cFFFF0000"..BOg.."|r|cFFFFFFFFg|cFFFF0000"..BOs.."|r|cFFFFFFFFs|cFFFF0000"..BOc.."|r|cFFFFFFFFc|r";
 		else
-			return "|cFF00FF00"..BOg.."|rg|cFF00FF00"..BOs.."|rs|cFF00FF00"..BOc.."|rc";
+			return "|cFF00FF00"..BOg.."|r|cFFFFFFFFg|cFF00FF00"..BOs.."|r|cFFFFFFFFs|cFF00FF00"..BOc.."|r|cFFFFFFFFc|r";
 		end
 	else
 		return BOg.."g"..BOs.."s"..BOc.."c";
@@ -24,11 +31,24 @@ end
 
 lastStep = 0;
 lastRefresh = GetTime();
+lastItem = "";
+OriginalRegentString = getglobal("ATSWReagentLabel"):GetText();
+
 function AucProf_OnUpdate()
-	if(getglobal("TradeSkillListScrollFrameScrollBar"):GetValue() ~= lastStep or GetTime() - lastRefresh > 0.1) then
-		UpdatePrice();
-		lastStep = getglobal("TradeSkillListScrollFrameScrollBar"):GetValue();
+	if(getglobal("ATSWListScrollFrameScrollBar"):GetValue() ~= lastStep or GetTime() - lastRefresh > 0.1 and FirstRun == false) then
+		UpdatePrice(23);
+		lastStep = getglobal("ATSWListScrollFrameScrollBar"):GetValue();
 		lastRefresh = GetTime();
+	end--ATSWReagentLabel
+	if(lastItem ~= getglobal("ATSWSkillName"):GetText()) then
+		lastItem = getglobal("ATSWSkillName"):GetText();
+		local cost, profit = GetSkillInfo(getglobal("ATSWSkillName"):GetText());
+		--aucprof_Print(tostring(cost).." "..tostring(profit));
+		if(cost ~= nil and profit ~= nil) then
+			getglobal("ATSWReagentLabel"):SetText(OriginalRegentString.."|cFFFFFFFF"..AucProf_MoneyString(cost).." ("..AucProf_MoneyString(profit,true).."|cFFFFFFFF) Pct Return:"..round(((profit/cost)*100)).."%");
+		else
+			getglobal("ATSWReagentLabel"):SetText(OriginalRegentString);
+		end
 	end
 end
 
@@ -62,49 +82,51 @@ function AucProf_OnEvent(this, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, 
 	elseif(event == "TRADE_SKILL_UPDATE" or event == "UPDATE_TRADESKILL_RECAST" or event == "TRADE_SKILL_FILTER_UPDATE") then
 		if(FirstRun ~= true) then
 			aucprof_PrintDebug("Update "..tostring(event));
-			UpdatePrice();
+			UpdatePrice(23);
 		end
 	elseif(event == "TRADE_SKILL_SHOW") then
 		if(FirstRun == true) then
+			local RowString = "ATSWSkill";
+			local Frame = "ATSWFrame";
 			aucprof_PrintDebug("Creating the FontStrings and Frame");
-			newFrame = CreateFrame("Frame","AuctioneerTradeSkillFrame",getglobal("TradeSkillFrame"));
-			point, relativeTo, relativePoint, xOfs, yOfs = getglobal("TradeSkillFrame"):GetPoint(n);
+			newFrame = CreateFrame("Frame","AuctioneerTradeSkillFrame",getglobal(Frame));
+			point, relativeTo, relativePoint, xOfs, yOfs = getglobal(Frame):GetPoint(n);
 			newFrame:SetPoint(point,relativeTo,relativePoint, xOfs, yOfs);
-			for index=0, 7 do
-				local frameName = "TradeSkillSkill"..index+1;
+			for index=0, 22 do
+				local frameName = RowString..index+1;
 				local name = "";
 				if(index == 0) then
 					name = "TradeSkillSkillJUNKAuctioneer"
 				else
-					name = "TradeSkillSkill"..index.."Auctioneer";
+					name = RowString..index.."Auctioneer";
 				end
 				fontstring = newFrame:CreateFontString(name, "OVERLAY", "GameFontWhite");
-				point, relativeTo, relativePoint, xOfs, yOfs = getglobal("TradeSkillSkill"..index+1):GetPoint(n);
+				point, relativeTo, relativePoint, xOfs, yOfs = getglobal(RowString..index+1):GetPoint(n);
 				--aucprof_Print(index.."-"..xOfs.."-"..yOfs);
-				fontstring:SetPoint("TOPRIGHT",getglobal("TradeSkillSkill"..index),"TOPRIGHT", 0, 0);
+				fontstring:SetPoint("TOPRIGHT",getglobal(RowString..index),"TOPRIGHT", 0, 0);
 				fontstring:SetJustifyH("LEFT");
 				fontstring:SetText("ASDAS|cFFFF0000DASA|r");
-				fontstring:SetText("");
+				--fontstring:SetText("");
 				fontstring:SetTextHeight(12);
 				fontstring:Show();
 			end
-				local frameName = "TradeSkillSkill".."8";
-				fontstring = newFrame:CreateFontString("TradeSkillSkill".."8".."Auctioneer", "OVERLAY", "GameFontWhite");
-				point, relativeTo, relativePoint, xOfs, yOfs = getglobal("TradeSkillSkill".."8"):GetPoint(n);
+				local frameName = RowString.."23";
+				fontstring = newFrame:CreateFontString(RowString.."23".."Auctioneer", "OVERLAY", "GameFontWhite");
+				point, relativeTo, relativePoint, xOfs, yOfs = getglobal(RowString.."8"):GetPoint(n);
 				--aucprof_Print("8".."-"..xOfs.."-"..yOfs);
-				fontstring:SetPoint("TOPRIGHT",getglobal("TradeSkillSkill".."8"),"TOPRIGHT", 0, 0);
+				fontstring:SetPoint("TOPRIGHT",getglobal(RowString.."23"),"TOPRIGHT", 0, 0);
 				fontstring:SetJustifyH("LEFT");
 				fontstring:SetText("ASDAS|cFFFF0000DASA|r");
-				fontstring:SetText("");
+				--fontstring:SetText("");
 				fontstring:SetTextHeight(12);
 				fontstring:Show();
 			FirstRun = false;
-			UpdatePrice();
+			UpdatePrice(23);
 		end
-		AuctioneerProffesion_InfoFrame:ClearAllPoints();
-		AuctioneerProffesion_InfoFrame:SetParent(TradeSkillFrame);
-		AuctioneerProffesion_InfoFrame:SetPoint("TOPRIGHT","TradeSkillFrame","TOPRIGHT",200,-15);
-		AuctioneerProffesion_InfoFrame:Show();
+		--AuctioneerProffesion_InfoFrame:ClearAllPoints();
+		--AuctioneerProffesion_InfoFrame:SetParent(TradeSkillFrame);
+		--AuctioneerProffesion_InfoFrame:SetPoint("TOPRIGHT","TradeSkillFrame","TOPRIGHT",200,-15);
+		--AuctioneerProffesion_InfoFrame:Show();
 		aucprof_PrintDebug("Shown");
 	elseif event == "VARIABLES_LOADED" then
 		aucprof_Print("Vars Loaded");
@@ -147,9 +169,9 @@ function AucProf_Merchant_CheckIfAvailable(itemid)
 	end
 end
 
-function GetSkillInfo(itemName, frameName)
-	local cost = -1;
-	local profit = -1;
+function GetSkillInfo(itemName)
+	local cost = nil;
+	local profit = nil;
 	for i=1, GetNumTradeSkills() do
 
 		skillName, skillType, numAvailable, isExpanded, altVerb, numSkillUps = GetTradeSkillInfo(i)
@@ -188,15 +210,19 @@ function GetSkillInfo(itemName, frameName)
 	return cost, profit;
 end
 
-function UpdatePrice()
-	for index=1, 8 do
-		local aucText = "TradeSkillSkill"..index.."Auctioneer";
+function UpdatePrice(rows)
+	for index=1, rows do
+		local aucText = "ATSWSkill"..index.."Auctioneer";
 		getglobal(aucText):SetText("");
-		local frameName = "TradeSkillSkill"..index;
+		local frameName = "ATSWSkill"..index;
 		local fixedString = string.sub(getglobal(frameName):GetText(),2);
-		local cost, profit = GetSkillInfo(fixedString, frameName);
-		getglobal(aucText):SetText("("..AucProf_MoneyString(profit,true)..")");
-		getglobal(aucText):Show();
+		local cost, profit = GetSkillInfo(fixedString);
+		if(cost ~= nil and profit ~= nil) then
+			getglobal(aucText):SetText("("..AucProf_MoneyString(profit,true)..")");
+			getglobal(aucText):Show();
+		else
+			getglobal(aucText):SetText("");
+		end
 	end
 end
 
@@ -212,7 +238,7 @@ function AucProf_SlashHandler(msg)
 		end
 	end
 	if(msg =="price") then
-		UpdatePrice();
+		UpdatePrice(23);
 	end
 	
 end
