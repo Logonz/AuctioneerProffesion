@@ -89,9 +89,9 @@ function AucProf_OnEvent(this, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, 
 			local RowString = "ATSWSkill";
 			local Frame = "ATSWFrame";
 			aucprof_PrintDebug("Creating the FontStrings and Frame");
-			newFrame = CreateFrame("Frame","AuctioneerTradeSkillFrame",getglobal(Frame));
-			point, relativeTo, relativePoint, xOfs, yOfs = getglobal(Frame):GetPoint(n);
-			newFrame:SetPoint(point,relativeTo,relativePoint, xOfs, yOfs);
+			newFrame = CreateFrame("Frame","ATSWFrame",getglobal(Frame));
+			point, relativeTo, relativePoint, xOfs, yOfs = getglobal(Frame):GetPoint(1);
+			newFrame:SetPoint(point,"ATSWFrame",relativePoint, xOfs, yOfs);
 			for index=0, 22 do
 				local frameName = RowString..index+1;
 				local name = "";
@@ -101,7 +101,7 @@ function AucProf_OnEvent(this, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, 
 					name = RowString..index.."Auctioneer";
 				end
 				fontstring = newFrame:CreateFontString(name, "OVERLAY", "GameFontWhite");
-				point, relativeTo, relativePoint, xOfs, yOfs = getglobal(RowString..index+1):GetPoint(n);
+				point, relativeTo, relativePoint, xOfs, yOfs = getglobal(RowString..index+1):GetPoint(1);
 				--aucprof_Print(index.."-"..xOfs.."-"..yOfs);
 				fontstring:SetPoint("TOPRIGHT",getglobal(RowString..index),"TOPRIGHT", 0, 0);
 				fontstring:SetJustifyH("LEFT");
@@ -112,7 +112,7 @@ function AucProf_OnEvent(this, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, 
 			end
 				local frameName = RowString.."23";
 				fontstring = newFrame:CreateFontString(RowString.."23".."Auctioneer", "OVERLAY", "GameFontWhite");
-				point, relativeTo, relativePoint, xOfs, yOfs = getglobal(RowString.."8"):GetPoint(n);
+				point, relativeTo, relativePoint, xOfs, yOfs = getglobal(RowString.."8"):GetPoint(1);
 				--aucprof_Print("8".."-"..xOfs.."-"..yOfs);
 				fontstring:SetPoint("TOPRIGHT",getglobal(RowString.."23"),"TOPRIGHT", 0, 0);
 				fontstring:SetJustifyH("LEFT");
@@ -217,7 +217,7 @@ function UpdatePrice(rows)
 		local frameName = "ATSWSkill"..index;
 		local fixedString = string.sub(getglobal(frameName):GetText(),2);
 		local cost, profit = GetSkillInfo(fixedString);
-		if(cost ~= nil and profit ~= nil) then
+		if(cost ~= nil and profit ~= nil and fixedString ~= "" and getglobal(frameName):IsVisible() ~= nil) then
 			getglobal(aucText):SetText("("..AucProf_MoneyString(profit,true)..")");
 			getglobal(aucText):Show();
 		else
@@ -232,6 +232,14 @@ function AucProf_SlashHandler(msg)
 		--Base command
 		aucprof_Print("SlashCommand Used");
 	end
+	if(msg == "a") then
+		local frameName = "ATSWSkill22";
+		local fixedString = string.sub(getglobal(frameName):GetText(),2);
+		aucprof_Print(getglobal(frameName):GetText());
+		aucprof_Print(getglobal(frameName):IsShown());
+		aucprof_Print(getglobal(frameName):IsVisible());
+	end
+	
 	if(msg == "t") then
 		for k, v in pairs(aucprof_merchantitems) do
 			aucprof_Print(k.." "..v.itemName);
