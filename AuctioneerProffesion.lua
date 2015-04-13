@@ -264,7 +264,7 @@ end
 function aucprof_PrintDebug(message) -- Send Error to Chat Frame
 	if(DEBUG == true) then
 		local msg = "[AP] Debug: "..message;
-		DEFAULT_CHAT_FRAME:AddMessage(msg, 1.0, 0.5, 1.0);
+		--DEFAULT_CHAT_FRAME:AddMessage(msg, 1.0, 0.5, 1.0);
 	end
 	
 end
